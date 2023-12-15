@@ -76,6 +76,7 @@ namespace WindowsFormsApp2
 			InitializeComponent();
             Load_DB();
             Show_DB();
+            updateChart();
             this.label5.Text = index.ToString();
         }
 
@@ -126,7 +127,7 @@ namespace WindowsFormsApp2
 
             // show database in the gui
             Show_DB();
-
+            updateChart();
         }
 
         private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -195,10 +196,221 @@ namespace WindowsFormsApp2
             DBConfig.sqlite_cmd = new SQLiteCommand(sql, DBConfig.sqlite_connect);
             DBConfig.sqlite_cmd.ExecuteNonQuery();
             Show_DB();
-        
+            updateChart();
 
         }
 
-        
+        private void button4_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            save.FileName = "Export_Data";
+            save.Filter = "*.xlsx|*.xlsx";
+            if (save.ShowDialog() != DialogResult.OK) return;
+
+            // Excel 物件
+            Microsoft.Office.Interop.Excel.Application xls = null;
+            try
+            {
+                xls = new Microsoft.Office.Interop.Excel.Application();
+                // Excel WorkBook
+                Microsoft.Office.Interop.Excel.Workbook book = xls.Workbooks.Add();
+                //Excel.Worksheet Sheet = (Excel.Worksheet)book.Worksheets[1];
+                Microsoft.Office.Interop.Excel.Worksheet Sheet = xls.ActiveSheet;
+
+                // 把 DataGridView 資料塞進 Excel 內
+
+                // DataGridView 標題
+                for (int k = 0; k < this.dataGridView1.Columns.Count; k++)
+                {
+                    Sheet.Cells[1, k + 1] = this.dataGridView1.Columns[k].HeaderText.ToString();
+                }
+
+                // DataGridView 內容
+                for (int i = 0; i < this.dataGridView1.Rows.Count - 1; i++)
+                {
+                    for (int j = 0; j < this.dataGridView1.Columns.Count; j++)
+                    {
+                        string value = dataGridView1.Rows[i].Cells[j].Value.ToString();
+                        Sheet.Cells[i + 2, j + 1] = value;
+                    }
+                }
+
+                // 儲存檔案
+                book.SaveAs(save.FileName);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                xls.Quit();
+            }
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            save.FileName = "Export_bar_Chart_Data";
+            save.Filter = "*.xlsx|*.xlsx";
+            if (save.ShowDialog() != DialogResult.OK) return;
+
+            // Excel 物件
+
+            Microsoft.Office.Interop.Excel.Application xls = null;
+            try
+            {
+                xls = new Microsoft.Office.Interop.Excel.Application();
+                // Excel WorkBook
+                Microsoft.Office.Interop.Excel.Workbook book = xls.Workbooks.Add();
+                //Excel.Worksheet Sheet = (Excel.Worksheet)book.Worksheets[1];
+                Microsoft.Office.Interop.Excel.Worksheet Sheet = xls.ActiveSheet;
+
+                // 把資料塞進 Excel 內
+
+                // 標題
+                Sheet.Cells[1, 1] = "標籤";
+                Sheet.Cells[1, 2] = "數量";
+
+                // 內容
+                for (int k = 0; k < this.chart1.Series["stocks"].Points.Count; k++)
+                {
+                    Sheet.Cells[k + 2, 1] = this.chart1.Series["stocks"].Points[k].AxisLabel.ToString();
+                    Sheet.Cells[k + 2, 2] = this.chart1.Series["stocks"].Points[k].YValues[0].ToString();
+                }
+
+
+                // 儲存檔案
+                book.SaveAs(save.FileName);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                xls.Quit();
+            }
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            save.FileName = "Export_bar_Chart1_JPG";
+            save.Filter = "*.jpg|*.jpg";
+            if (save.ShowDialog() != DialogResult.OK) return;
+
+            chart1.SaveImage(save.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            save.FileName = "Export_pie_Chart_Data";
+            save.Filter = "*.xlsx|*.xlsx";
+            if (save.ShowDialog() != DialogResult.OK) return;
+
+            // Excel 物件
+
+            Microsoft.Office.Interop.Excel.Application xls = null;
+            try
+            {
+                xls = new Microsoft.Office.Interop.Excel.Application();
+                // Excel WorkBook
+                Microsoft.Office.Interop.Excel.Workbook book = xls.Workbooks.Add();
+                //Excel.Worksheet Sheet = (Excel.Worksheet)book.Worksheets[1];
+                Microsoft.Office.Interop.Excel.Worksheet Sheet = xls.ActiveSheet;
+
+                // 把資料塞進 Excel 內
+
+                // 標題
+                Sheet.Cells[1, 1] = "標籤";
+                Sheet.Cells[1, 2] = "數量";
+
+                // 內容
+                for (int k = 0; k < this.chart2.Series["stocks"].Points.Count; k++)
+                {
+                    Sheet.Cells[k + 2, 1] = this.chart2.Series["stocks"].Points[k].AxisLabel.ToString();
+                    Sheet.Cells[k + 2, 2] = this.chart2.Series["stocks"].Points[k].YValues[0].ToString();
+                }
+
+
+                // 儲存檔案
+                book.SaveAs(save.FileName);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                xls.Quit();
+            }
+
+        }
+        private void button8_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            save.FileName = "Export_Chart_pie_JPG";
+            save.Filter = "*.jpg|*.jpg";
+            if (save.ShowDialog() != DialogResult.OK) return;
+
+            chart2.SaveImage(save.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+        }
+
+        public void updateChart()
+        {
+            // 1. 進貨統計
+
+            string sql = @"SELECT * from record where type=1;";
+            DBConfig.sqlite_cmd = new SQLiteCommand(sql, DBConfig.sqlite_connect);
+            DBConfig.sqlite_datareader = DBConfig.sqlite_cmd.ExecuteReader();
+
+            Dictionary<string, double> _stocks_bar_out = new Dictionary<string, double>();
+            Dictionary<string, double> _stocks_bar_out_sum = new Dictionary<string, double>();
+
+            if (DBConfig.sqlite_datareader.HasRows)
+            {
+                while (DBConfig.sqlite_datareader.Read()) //read every data
+                {
+                    string _name = Convert.ToString(DBConfig.sqlite_datareader["name"]);
+                    double _price = Convert.ToDouble(DBConfig.sqlite_datareader["price"]);
+                    double _number = Convert.ToDouble(DBConfig.sqlite_datareader["number"]);
+                    if (!_stocks_bar_out.ContainsKey(_name))
+                    {
+                        _stocks_bar_out.Add(_name, 0);
+                        _stocks_bar_out_sum.Add(_name, 0);
+                    }
+                    _stocks_bar_out[_name] = _stocks_bar_out[_name] + _number;
+                    _stocks_bar_out_sum[_name] = _stocks_bar_out_sum[_name] + _number * _price;
+                }
+                DBConfig.sqlite_datareader.Close();
+            }
+
+
+
+            this.chart1.Series["stocks"].Points.Clear();
+            foreach (var OneItem in _stocks_bar_out)
+            {
+                this.chart1.Series["stocks"].Points.AddXY(OneItem.Key, OneItem.Value);
+            }
+
+            this.chart2.Series["stocks"].Points.Clear();
+            foreach (var OneItem in _stocks_bar_out_sum)
+            {
+                this.chart2.Series["stocks"].Points.AddXY(OneItem.Key, OneItem.Value);
+            }
+
+        }
+
     }
 }
